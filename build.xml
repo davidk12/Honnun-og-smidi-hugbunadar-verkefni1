@@ -1,0 +1,65 @@
+<project name="TripImportProcess" default="jar" basedir=".">
+
+    <!-- ======================================================== -->
+    <!-- Global properties                                        -->
+    <!-- ======================================================== -->
+    <property name="src.java" value="src/java"/>
+    <property name="src.msg" value="src/msg"/>
+    <property name="output.dir" value="classes"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="packages" value="is/ru/honn/ruber/"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="jar.file" value="TripImportProcess.jar"/>
+    <property name="framework" value="is.ruframework"/>
+    <property name="classpath"
+              value="${lib.dir}"/>
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+
+    </path>
+    <!-- ======================================================== -->
+    <target name="init"
+            description="Prepare by creating output directories">
+        <mkdir dir="${output.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <!-- ======================================================== -->
+    <target name="compile" depends="init"
+            description="Compilation of all source files">
+        <javac srcdir="${src.java}"
+               destdir="${output.dir}"
+               classpathref="classpath"/>
+    </target>
+
+    <!-- ======================================================== -->
+    <target name="jar" depends="compile"
+            description="Create the JAR">
+        <jar jarfile="${dist.dir}/${jar.file}"
+             basedir="${output.dir}">
+            <fileset dir="${src.msg}"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="is.ruframework.process.RuProcessRunner"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- ======================================================== -->
+    <target name="run" depends="jar"
+            description="Runs the process">
+        <java classname="is.ruframework.process.RuProcessRunner">
+            <classpath>
+                <pathelement path="${classpath}"/>
+                <pathelement location="${dist.dir}\TripImportProcess.jar"/>
+            </classpath>
+            <arg value="process.xml"/>
+        </java>
+    </target>
+
+    <!-- ======================================================== -->
+    <target name="clean" description="Delete all generated files">
+        <delete dir="${output.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+</project>
